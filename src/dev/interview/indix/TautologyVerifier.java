@@ -21,6 +21,8 @@ public class TautologyVerifier {
 
 	public static void main(String[] args) {
 		
+		TautologyVerifier tauVerifier = new TautologyVerifier();
+		
 		Scanner sc=new Scanner(System.in); 
 		System.out.printf("Please specify how many expression you want to evaluate: ");
 		int count = sc.nextInt();
@@ -32,11 +34,12 @@ public class TautologyVerifier {
 			expressionArray[j] = sc.nextLine();
 		}
 		for(int i=0; i<count; i++){
-			tautologyVerifier(expressionArray[i]);
+			Boolean value = tauVerifier.tautologyVerifier(expressionArray[i]);
+			System.out.println(value);
 		}
 	}
 
-	private static void tautologyVerifier(String expression) {
+	public Boolean tautologyVerifier(String expression) {
 		TreeSet<Character> expressionSet = (TreeSet<Character>) getVariableSet(expression);
 		int variableSize = expressionSet.size();
 
@@ -46,18 +49,14 @@ public class TautologyVerifier {
 			String[] scriptExpression = scriptExpressionBuilder(Integer.toBinaryString(i), expressionSet);
 			Integer value = expressionEvaluation(expression, scriptExpression);
 			if(value == 0){
-				System.out.println(false);
 				tautologyCheck = false;
 				break;
 			} 
 		}
-		
-		if(tautologyCheck){
-			System.out.println(true);
-		}
+		return tautologyCheck;
 	}
 	
-	public static Set getVariableSet(String expression) {
+	public Set getVariableSet(String expression) {
 		TreeSet<Character> expressionSet = new TreeSet<Character>();
 		for(int i=0 ; i<expression.length(); i++){
 			char variable = expression.charAt(i);
@@ -70,7 +69,7 @@ public class TautologyVerifier {
 		return expressionSet;
 	}
 
-	public static String[] scriptExpressionBuilder(String binary, TreeSet expressionSet) {
+	public String[] scriptExpressionBuilder(String binary, TreeSet expressionSet) {
 		List<Character> list = new ArrayList<Character>(expressionSet);
 		String[] variableArray = new String[expressionSet.size()];
 		
@@ -87,7 +86,7 @@ public class TautologyVerifier {
 		return variableArray;
 	}
 
-	public static Integer expressionEvaluation(String expr, String[] userVar) {
+	public Integer expressionEvaluation(String expr, String[] userVar) {
 		ScriptEngine engine = new ScriptEngineManager().getEngineByName("JavaScript");
 		try {
 			for (String s : userVar) {
